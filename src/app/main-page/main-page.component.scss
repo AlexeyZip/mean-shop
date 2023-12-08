@@ -1,0 +1,27 @@
+.main-page-header {
+    display: grid;
+    grid-template-columns: 1fr 4fr;
+}
+
+.example-form {
+    // grid-column: 1 / span 2; /* Занимает два трека начиная с первого */
+    justify-self: center;   /* Горизонтальное выравнивание по центру внутри трека */
+    mat-form-field {
+        margin-right: 20px;
+    }
+    button {
+        margin-bottom: 20px;
+    }
+}
+
+.main-content {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px; /* Пространство между элементами внутри grid */
+}
+
+.example-full-width {
+    width: 600px;
+    max-width: 600px;
+    min-width: 300px;
+}

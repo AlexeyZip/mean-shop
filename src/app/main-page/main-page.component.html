@@ -1,0 +1,32 @@
+<header class="main-page-header">
+    <!-- <div class="product-catalog">
+        <mat-list role="list">
+            <mat-list-item role="listitem">
+                <a [routerLink]="['product']">Smartphones</a>
+            </mat-list-item>
+            <mat-list-item role="listitem">
+                <a [routerLink]="['product']">Laptops</a>
+            </mat-list-item>
+            <mat-list-item role="listitem">
+                <a [routerLink]="['product']">Home-appliances</a>
+            </mat-list-item>
+        </mat-list>
+    </div> -->
+    <div class="logo">
+        <h1>Logo</h1>
+    </div>
+    <form class="example-form">
+        <mat-form-field class="example-full-width">
+          <mat-label>Email</mat-label>
+          <input type="email" matInput
+                 placeholder="Product search">
+          <!-- <mat-hint>Errors appear instantly!</mat-hint> -->
+        </mat-form-field>
+        <button mat-flat-button color="primary" type="button">Search</button>
+    </form>
+
+</header>
+<div class="main-content">
+    <app-product-navigation></app-product-navigation>
+    <router-outlet></router-outlet>
+</div>
