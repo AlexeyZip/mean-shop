@@ -3,6 +3,7 @@ import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { AngularMaterialModule } from '../../angular-material.module';
 import { CommonModule } from '@angular/common';
 import { ProductService } from '../../shared/product.service';
+import { Product } from '../../interfaces/product.interface';
 
 @Component({
   selector: 'app-create-product',
@@ -38,8 +39,12 @@ export class CreateProductComponent implements OnInit {
     }
 
     onSavePost(): void {
-        console.log(this.createProductForm);
-        const product = this.createProductForm.value;
+        const product: Product = {
+            id: null,
+            title: this.createProductForm.value.title ?? '',
+            description: this.createProductForm.value.description ?? '',
+            image: this.createProductForm.value.image ?? null
+        };
         this.productService.createProduct(product);
         this.createProductForm.reset();
     }
