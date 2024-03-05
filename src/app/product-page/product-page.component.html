@@ -4,4 +4,9 @@
     <div class="">Product Name: {{product.title}}</div>
     <div class="">Product Description:  {{product.description}}</div>
     <div class="">Image:  {{product.image}}</div>
+    <div class="">Price:  {{product.price}}</div>
+    <div class="">
+        <button>Edit</button>
+        <button (click)="onDelete(product.id)">Delete</button>
+    </div>
 </div>

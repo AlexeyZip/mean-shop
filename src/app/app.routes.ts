@@ -3,6 +3,7 @@ import { MainPageComponent } from './main-page/main-page.component';
 import { ProductPageComponent } from './product-page/product-page.component';
 import { DashboardPageComponent } from './admin/dashboard-page/dashboard-page.component';
 import { CreateProductComponent } from './admin/create-product/create-product.component';
+import { ProductListComponent } from './admin/product-list/product-list.component';
 
 export const routes: Routes = [
     {
@@ -17,7 +18,8 @@ export const routes: Routes = [
         path: 'admin',
         component: DashboardPageComponent,
         children: [
-            { path: 'createProduct', component: CreateProductComponent}
+            { path: 'createProduct', component: CreateProductComponent},
+            { path: 'productList', component: ProductListComponent}
         ]
     } 
     // {

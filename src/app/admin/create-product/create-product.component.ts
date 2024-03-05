@@ -26,6 +26,9 @@ export class CreateProductComponent implements OnInit {
         description: new FormControl(null, {
             validators: [Validators.required]
         }),
+        price: new FormControl(null, {
+            validators: [Validators.required]
+        }),
         image: new FormControl(null as File | null, {
             validators: [Validators.required],
             // asyncValidators: [mimeType]
@@ -43,6 +46,7 @@ export class CreateProductComponent implements OnInit {
             id: null,
             title: this.createProductForm.value.title ?? '',
             description: this.createProductForm.value.description ?? '',
+            price: this.createProductForm.value.price ?? 0,
             image: this.createProductForm.value.image ?? null
         };
         this.productService.createProduct(product);
