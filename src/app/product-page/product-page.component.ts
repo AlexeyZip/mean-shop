@@ -25,6 +25,10 @@ export class ProductPageComponent implements OnInit, OnDestroy {
         this.productService.getProducts();
     }
 
+    onDelete(productId: string): void {
+        this.productService.deleteProduct(productId);
+    }
+
     ngOnDestroy(): void {
         this.productSub.unsubscribe();
     }
