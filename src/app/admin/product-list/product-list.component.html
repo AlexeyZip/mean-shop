@@ -1,4 +1,5 @@
-<table mat-table [dataSource]="products" class="mat-elevation-z8">
+<mat-spinner *ngIf="isLoading"></mat-spinner>
+<table mat-table [dataSource]="products" class="mat-elevation-z8" *ngIf="products.length > 0 && !isLoading">
     <ng-container matColumnDef="title">
       <th mat-header-cell *matHeaderCellDef>Title</th>
       <td mat-cell *matCellDef="let element">{{ element.title }}</td>

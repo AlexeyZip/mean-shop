@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AngularMaterialModule } from '../../angular-material.module';
 import { CommonModule } from '@angular/common';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { ProductService } from '../../shared/product.service';
 import { Product } from '../../interfaces/product.interface';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
@@ -10,16 +11,19 @@ import { ActivatedRoute, ParamMap, Router } from '@angular/router';
   selector: 'app-create-product',
   standalone: true,
   imports: [
+        CommonModule,
         FormsModule,
         ReactiveFormsModule,
         AngularMaterialModule,
-        CommonModule
+        CommonModule,
+        MatProgressSpinnerModule
     ],
   templateUrl: './create-product.component.html',
   styleUrl: './create-product.component.scss'
 })
 export class CreateProductComponent implements OnInit {
     imagePreview: string = '';
+    isLoading: boolean = false;
     private mode: 'create' | 'edit' = 'create';
     private productId: string | null = null;
     private product: Product | null = null;
@@ -50,16 +54,16 @@ export class CreateProductComponent implements OnInit {
             if (paramMap.has('productId')) {
                 this.mode = 'edit';
                 this.productId = paramMap.get('productId')!;
+                this.isLoading = true;
                 this.productService.getProduct(this.productId).subscribe((productData: Product) => {
                     this.product = productData;
-                    console.log(this.product);
-                    
                     this.createProductForm.setValue({
                         title: this.product?.title ?? null,
                         description: this.product?.description ?? null,
                         price: this.product?.price ?? null,
                         image: null
                     });
+                    this.isLoading = false;
                 });
             } else {
                 this.mode = 'create';
@@ -79,26 +83,13 @@ export class CreateProductComponent implements OnInit {
             image: this.createProductForm.value.image ?? null
         };
         this.mode !== 'edit' ? this.productService.createProduct(product) : this.productService.updateProduct(product);
+        this.isLoading = true;
+        if (this.mode !== 'edit') {
+            this.productService.createProduct(product);
+        } else {
+            this.productService.updateProduct(product);
+        }
         this.createProductForm.reset();
-
-        //CODE BELOW NAVIGATE TO PRODUCTS LIST RIGHT AFTER PRODUCT WAS SAVED
-        // let saveObservable: Observable<void>;
-
-        // if (this.mode !== 'edit') {
-        //     saveObservable = this.productService.createProduct(product);
-        // } else {
-        //     saveObservable = this.productService.updateProduct(product);
-        // }
-
-        // saveObservable.subscribe({
-        //     next: (response) => {
-        //         this.createProductForm.reset();
-        //         this.router.navigate(['/admin/productList']);
-        //     },
-        //     error: (error) => {
-        //         console.error('Failed to save product:', error);
-        //     }
-        // });
     }
 
     onImagePicked(event: Event): void {
