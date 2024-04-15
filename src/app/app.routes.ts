@@ -10,8 +10,7 @@ export const routes: Routes = [
         path: '',
         component: MainPageComponent,
         children: [
-            { path: 'product', component: ProductPageComponent },
-            // { path: 'create-product', component: CreateProductComponent }
+            { path: 'product', component: ProductPageComponent }
         ]
     },
     {
@@ -19,10 +18,8 @@ export const routes: Routes = [
         component: DashboardPageComponent,
         children: [
             { path: 'createProduct', component: CreateProductComponent},
-            { path: 'productList', component: ProductListComponent}
+            { path: 'productList', component: ProductListComponent},
+            { path: 'edit/:productId', component: CreateProductComponent}
         ]
-    } 
-    // {
-    //     path: 'create-product', component: CreateProductComponent
-    // }
+    }
 ];

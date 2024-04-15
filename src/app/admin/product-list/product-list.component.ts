@@ -4,11 +4,12 @@ import {MatTableModule} from '@angular/material/table';
 import { Subscription } from 'rxjs';
 import { Product } from '../../interfaces/product.interface';
 import { ProductService } from '../../shared/product.service';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-product-list',
   standalone: true,
-  imports: [MatIconModule, MatTableModule],
+  imports: [MatIconModule, MatTableModule, RouterModule],
   templateUrl: './product-list.component.html',
   styleUrl: './product-list.component.scss'
 })
@@ -23,9 +24,6 @@ export class ProductListComponent {
                 this.products = products;
             });
         this.productService.getProducts();
-    }
-    edit(element: any) {
-        console.log('edit', element);
     }
 
     delete(productId: string) {
