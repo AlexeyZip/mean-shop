@@ -30,13 +30,29 @@ export class ProductService {
                 this.productUpdated.next([...this.products])
             });
     }
+    
+    updateProduct(product: Product): void {
+        this.http.put('http://localhost:3000/api/products/' + product.id, product)
+        .subscribe(responseData => {
+        const updatedProducts = [...this.products];
+            const oldProductIndex = updatedProducts.findIndex(p => p.id === product.id);
+            updatedProducts[oldProductIndex] = product;
+            this.products = updatedProducts;
+            this.productUpdated.next([...this.products]);
+        }
+        );
+    }
 
     getProductUpdateListener() {
         return this.productUpdated.asObservable();
     }
+
+    getProduct(id: string) {
+        return this.http.get<Product>('http://localhost:3000/api/products/' + id);
+    }
     
     getProducts(): any {
-        this.http.get<{message: string, products: any}>('http://localhost:3000/api/products')
+        this.http.get<{message: string, products: Product[]}>('http://localhost:3000/api/products')
         .pipe(map((productData) => {
             return productData.products.map((product: any) => {
                 return {

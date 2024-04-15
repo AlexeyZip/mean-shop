@@ -4,6 +4,7 @@ import { AngularMaterialModule } from '../../angular-material.module';
 import { CommonModule } from '@angular/common';
 import { ProductService } from '../../shared/product.service';
 import { Product } from '../../interfaces/product.interface';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 
 @Component({
   selector: 'app-create-product',
@@ -19,14 +20,19 @@ import { Product } from '../../interfaces/product.interface';
 })
 export class CreateProductComponent implements OnInit {
     imagePreview: string = '';
+    private mode: 'create' | 'edit' = 'create';
+    private productId: string | null = null;
+    private product: Product | null = null;
+
+
     createProductForm = new FormGroup({
-        title: new FormControl(null, {
+        title: new FormControl('', {
             validators: [Validators.required, Validators.minLength(3)],
         }),
-        description: new FormControl(null, {
+        description: new FormControl('', {
             validators: [Validators.required]
         }),
-        price: new FormControl(null, {
+        price: new FormControl(0, {
             validators: [Validators.required]
         }),
         image: new FormControl(null as File | null, {
@@ -35,22 +41,64 @@ export class CreateProductComponent implements OnInit {
         })
     })
 
-    constructor(private productService: ProductService) {}
+    constructor(private productService: ProductService, public route: ActivatedRoute, private router: Router) {}
 
     ngOnInit(): void {
+        console.log('init');
         
+        this.route.paramMap.subscribe((paramMap: ParamMap) => {
+            if (paramMap.has('productId')) {
+                this.mode = 'edit';
+                this.productId = paramMap.get('productId')!;
+                this.productService.getProduct(this.productId).subscribe((productData: Product) => {
+                    this.product = productData;
+                    console.log(this.product);
+                    
+                    this.createProductForm.setValue({
+                        title: this.product?.title ?? null,
+                        description: this.product?.description ?? null,
+                        price: this.product?.price ?? null,
+                        image: null
+                    });
+                });
+            } else {
+                this.mode = 'create';
+                this.productId = null;
+            }
+        });
     }
 
     onSavePost(): void {
-        const product: Product = {
-            id: null,
+        console.log('save');
+        
+        const product = {
+            id: this.productId ?? null,
             title: this.createProductForm.value.title ?? '',
             description: this.createProductForm.value.description ?? '',
             price: this.createProductForm.value.price ?? 0,
             image: this.createProductForm.value.image ?? null
         };
-        this.productService.createProduct(product);
+        this.mode !== 'edit' ? this.productService.createProduct(product) : this.productService.updateProduct(product);
         this.createProductForm.reset();
+
+        //CODE BELOW NAVIGATE TO PRODUCTS LIST RIGHT AFTER PRODUCT WAS SAVED
+        // let saveObservable: Observable<void>;
+
+        // if (this.mode !== 'edit') {
+        //     saveObservable = this.productService.createProduct(product);
+        // } else {
+        //     saveObservable = this.productService.updateProduct(product);
+        // }
+
+        // saveObservable.subscribe({
+        //     next: (response) => {
+        //         this.createProductForm.reset();
+        //         this.router.navigate(['/admin/productList']);
+        //     },
+        //     error: (error) => {
+        //         console.error('Failed to save product:', error);
+        //     }
+        // });
     }
 
     onImagePicked(event: Event): void {
