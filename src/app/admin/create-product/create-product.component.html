@@ -1,5 +1,6 @@
 <div class="form-container">
-    <form [formGroup]="createProductForm" (submit)="onSavePost()">
+    <mat-spinner *ngIf="isLoading"></mat-spinner>
+    <form [formGroup]="createProductForm" (submit)="onSavePost()" *ngIf="!isLoading">
         <div class="mat-form-field">
             <mat-form-field appearance="outline">
                 <mat-label>Product Title</mat-label>

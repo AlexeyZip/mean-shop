@@ -3,6 +3,7 @@ import { Product } from "../interfaces/product.interface";
 import { Subject } from "rxjs";
 import { map } from "rxjs/operators";
 import { HttpClient, HttpClientModule } from "@angular/common/http";
+import { Router } from "@angular/router";
 
 @Injectable({
     providedIn: 'root',
@@ -10,7 +11,7 @@ import { HttpClient, HttpClientModule } from "@angular/common/http";
 export class ProductService {
     private products: Product[] = [];
     private productUpdated = new Subject<Product[]>();
-    constructor(private http: HttpClient) {}
+    constructor(private http: HttpClient, private router: Router) {}
 
     private productsKey = 'products';
 
@@ -27,7 +28,8 @@ export class ProductService {
                 const id = responseData.poductId;
                 newProduct.id = id;
                 this.products.push(newProduct);
-                this.productUpdated.next([...this.products])
+                this.productUpdated.next([...this.products]);
+                this.router.navigate(['/admin/productList']);
             });
     }
     
@@ -39,6 +41,7 @@ export class ProductService {
             updatedProducts[oldProductIndex] = product;
             this.products = updatedProducts;
             this.productUpdated.next([...this.products]);
+            this.router.navigate(['/admin/productList']);
         }
         );
     }
