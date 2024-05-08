@@ -1,7 +1,7 @@
-export interface Product {
+export interface ProductDTO {
     id: string | null,
     title: string,
     description: string,
-    image?: File | any;
+    imagePath?: string;
     price: number
 }

@@ -4,6 +4,7 @@ import { Subject } from "rxjs";
 import { map } from "rxjs/operators";
 import { HttpClient, HttpClientModule } from "@angular/common/http";
 import { Router } from "@angular/router";
+import { ProductDTO } from "./product.model";
 
 @Injectable({
     providedIn: 'root',
@@ -16,28 +17,48 @@ export class ProductService {
     private productsKey = 'products';
 
     createProduct(product: Product): void {
-        const newProduct = {
-            id: product.id,
-            title: product.title,
-            description: product.description,
-            price: product.price,
-            image: product.image
-        }
-        this.http.post<{message: string, poductId: string}>('http://localhost:3000/api/products', newProduct)
+        const productData = new FormData();
+        productData.append("title", product.title);
+        productData.append("description", product.description);
+        productData.append("price", product.price.toString());
+        productData.append("image", product.image, product.title);
+        this.http.post<{message: string, product: ProductDTO}>('http://localhost:3000/api/products', productData)
             .subscribe((responseData: any) => {
-                const id = responseData.poductId;
-                newProduct.id = id;
+                const newProduct: ProductDTO = {
+                    ...product,
+                    id: responseData.product.id,
+                    imagePath: responseData.product.imagePath
+
+                }
                 this.products.push(newProduct);
                 this.productUpdated.next([...this.products]);
                 this.router.navigate(['/admin/productList']);
             });
     }
     
-    updateProduct(product: Product): void {
-        this.http.put('http://localhost:3000/api/products/' + product.id, product)
+    updateProduct(product: Product | any): void {
+        let productData: Product | FormData;
+        if (typeof(product.image) === 'object') {
+            productData = new FormData();
+            productData.append("id", product.id);
+            productData.append("title", product.title);
+            productData.append("description", product.description);
+            productData.append("price", product.price.toString());
+            productData.append("image", product.image, product.title);
+        } else {
+            productData = product;
+        }
+        this.http.put('http://localhost:3000/api/products/' + product.id, productData)
         .subscribe(responseData => {
         const updatedProducts = [...this.products];
             const oldProductIndex = updatedProducts.findIndex(p => p.id === product.id);
+            const productObject = {
+                id: product.id,
+                title: product.title,
+                description: product.description,
+                price: product.price,
+                imagePath: "",
+            } 
             updatedProducts[oldProductIndex] = product;
             this.products = updatedProducts;
             this.productUpdated.next([...this.products]);
@@ -51,7 +72,7 @@ export class ProductService {
     }
 
     getProduct(id: string) {
-        return this.http.get<Product>('http://localhost:3000/api/products/' + id);
+        return this.http.get<ProductDTO>('http://localhost:3000/api/products/' + id);
     }
     
     getProducts(): any {
@@ -62,7 +83,8 @@ export class ProductService {
                     title: product.title,
                     description: product.description,
                     price: product.price,
-                    id: product._id
+                    id: product._id,
+                    imagePath: product.imagePath
                 }
             })
         }))

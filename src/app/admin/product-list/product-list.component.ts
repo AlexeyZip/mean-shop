@@ -18,7 +18,7 @@ import { CommonModule } from '@angular/common';
 export class ProductListComponent {
     products: any[] = [];
     isLoading: boolean = false;
-    displayedColumns: string[] = ['title', 'description', 'price', 'actions'];
+    displayedColumns: string[] = ['title', 'description', 'price', 'image', 'actions'];
     private productSub: Subscription = new Subscription;
     constructor(private productService: ProductService) {}
     ngOnInit(): void {

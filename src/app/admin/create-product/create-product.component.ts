@@ -6,6 +6,8 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { ProductService } from '../../shared/product.service';
 import { Product } from '../../interfaces/product.interface';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { mimeType } from './mime-type.validator';
+import { ProductDTO } from '../../shared/product.model';
 
 @Component({
   selector: 'app-create-product',
@@ -24,44 +26,45 @@ import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 export class CreateProductComponent implements OnInit {
     imagePreview: string = '';
     isLoading: boolean = false;
+    createProductForm: FormGroup;
     private mode: 'create' | 'edit' = 'create';
     private productId: string | null = null;
-    private product: Product | null = null;
+    private product: any = null;
 
 
-    createProductForm = new FormGroup({
-        title: new FormControl('', {
-            validators: [Validators.required, Validators.minLength(3)],
-        }),
-        description: new FormControl('', {
-            validators: [Validators.required]
-        }),
-        price: new FormControl(0, {
-            validators: [Validators.required]
-        }),
-        image: new FormControl(null as File | null, {
-            validators: [Validators.required],
-            // asyncValidators: [mimeType]
-        })
-    })
 
-    constructor(private productService: ProductService, public route: ActivatedRoute, private router: Router) {}
+    constructor(private productService: ProductService, public route: ActivatedRoute, private router: Router) {
+        this.createProductForm = new FormGroup({
+            title: new FormControl(null, {
+                validators: [Validators.required, Validators.minLength(3)],
+            }),
+            description: new FormControl(null, {
+                validators: [Validators.required]
+            }),
+            price: new FormControl(null, {
+                validators: [Validators.required]
+            }),
+            image: new FormControl(null as File | null, {
+                validators: [Validators.required],
+                asyncValidators: [mimeType]
+            })
+        });
+    }
 
     ngOnInit(): void {
         console.log('init');
-        
         this.route.paramMap.subscribe((paramMap: ParamMap) => {
             if (paramMap.has('productId')) {
                 this.mode = 'edit';
                 this.productId = paramMap.get('productId')!;
                 this.isLoading = true;
-                this.productService.getProduct(this.productId).subscribe((productData: Product) => {
+                this.productService.getProduct(this.productId).subscribe((productData: ProductDTO) => {
                     this.product = productData;
                     this.createProductForm.setValue({
                         title: this.product?.title ?? null,
                         description: this.product?.description ?? null,
                         price: this.product?.price ?? null,
-                        image: null
+                        image: this.product.imagePath ?? null
                     });
                     this.isLoading = false;
                 });
@@ -73,8 +76,9 @@ export class CreateProductComponent implements OnInit {
     }
 
     onSavePost(): void {
-        console.log('save');
-        
+        if (this.createProductForm.invalid) {
+            return
+        }
         const product = {
             id: this.productId ?? null,
             title: this.createProductForm.value.title ?? '',
@@ -84,11 +88,6 @@ export class CreateProductComponent implements OnInit {
         };
         this.mode !== 'edit' ? this.productService.createProduct(product) : this.productService.updateProduct(product);
         this.isLoading = true;
-        if (this.mode !== 'edit') {
-            this.productService.createProduct(product);
-        } else {
-            this.productService.updateProduct(product);
-        }
         this.createProductForm.reset();
     }
 
