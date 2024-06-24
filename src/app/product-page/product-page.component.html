@@ -1,12 +1,34 @@
 <!-- <app-create-product></app-create-product> -->
-<p>Products</p>
-<div *ngFor="let product of products">
+<h3>Products</h3>
+<!-- <div *ngFor="let product of products">
     <div class="">Product Name: {{product.title}}</div>
     <div class="">Product Description:  {{product.description}}</div>
     <div class="">Image:  {{product.image}}</div>
     <div class="">Price:  {{product.price}}</div>
     <div class="">
-        <button>Edit</button>
-        <button (click)="onDelete(product.id)">Delete</button>
+        <button>More Details</button>
     </div>
+</div> -->
+<div class="products">
+  <mat-card class="product-card" *ngFor="let product of products">
+    <mat-card-header>
+      <mat-card-title>{{ product.title }}</mat-card-title>
+    </mat-card-header>
+    <img
+      class="product-image"
+      mat-card-image
+      [src]="product.imagePath"
+      [alt]="product.title"
+    />
+    <mat-card-content>
+      <p>
+        {{ product.description }}
+      </p>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-button [routerLink]="['/details', product.id]">
+        More Details
+      </button>
+    </mat-card-actions>
+  </mat-card>
 </div>

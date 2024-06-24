@@ -1,0 +1,16 @@
+<h1>{{ product.title }}</h1>
+<div class="product-details">
+  <div class="">Product Name: {{ product.title }}</div>
+  <div class="">Product Description: {{ product.description }}</div>
+  <div class="">
+    <img
+      class="product-image"
+      mat-card-image
+      [src]="product.imagePath"
+      [alt]="product.title"
+    />
+  </div>
+  <div class="">Price: {{ product.price }}</div>
+</div>
+
+<button mat-button [routerLink]="['/product']">Back</button>
