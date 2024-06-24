@@ -1,19 +1,19 @@
 <header class="main-page-header">
-    <div class="logo">
-        <h1>Logo</h1>
-    </div>
-    <form class="example-form">
-        <mat-form-field class="example-full-width">
-          <mat-label>Search</mat-label>
-          <input type="text" matInput
-                 placeholder="Product search">
-          <!-- <mat-hint>Errors appear instantly!</mat-hint> -->
-        </mat-form-field>
-        <button mat-flat-button color="primary" type="button">Search</button>
-    </form>
-
+  <div class="logo">
+    <h1>Logo</h1>
+  </div>
+  <form class="example-form">
+    <mat-form-field class="example-full-width">
+      <mat-label>Search</mat-label>
+      <input type="text" matInput placeholder="Product search" />
+      <!-- <mat-hint>Errors appear instantly!</mat-hint> -->
+    </mat-form-field>
+    <button mat-flat-button color="primary" type="button">Search</button>
+  </form>
+  <a [routerLink]="['login']">Login</a>
+  <a [routerLink]="['login']">Sign up</a>
 </header>
 <div class="main-content">
-    <app-product-navigation></app-product-navigation>
-    <router-outlet></router-outlet>
+  <app-product-navigation></app-product-navigation>
+  <router-outlet></router-outlet>
 </div>
