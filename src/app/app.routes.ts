@@ -7,6 +7,7 @@ import { ProductListComponent } from './admin/product-list/product-list.componen
 import { ProductDetailsComponent } from './product-details/product-details.component';
 import { LoginComponent } from './auth/login/login.component';
 import { SignupnComponent } from './auth/signup/signup.component';
+import { AuthGuard } from './auth/auth.guard';
 
 export const routes: Routes = [
   {
@@ -23,9 +24,17 @@ export const routes: Routes = [
     path: 'admin',
     component: DashboardPageComponent,
     children: [
-      { path: 'createProduct', component: CreateProductComponent },
+      {
+        path: 'createProduct',
+        component: CreateProductComponent,
+        canActivate: [AuthGuard],
+      },
+      {
+        path: 'edit/:productId',
+        component: CreateProductComponent,
+        canActivate: [AuthGuard],
+      },
       { path: 'productList', component: ProductListComponent },
-      { path: 'edit/:productId', component: CreateProductComponent },
     ],
   },
 ];

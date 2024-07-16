@@ -31,8 +31,6 @@ export class ProductDetailsComponent {
   ) {}
 
   ngOnInit(): void {
-    console.log(123);
-
     this.route.paramMap.subscribe((paramMap: ParamMap) => {
       if (paramMap.has('productId')) {
         this.productId = paramMap.get('productId')!;
