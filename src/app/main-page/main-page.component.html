@@ -2,16 +2,29 @@
   <div class="logo">
     <h1>Logo</h1>
   </div>
-  <form class="example-form">
-    <mat-form-field class="example-full-width">
+  <form class="search-form">
+    <mat-form-field class="search-field">
       <mat-label>Search</mat-label>
       <input type="text" matInput placeholder="Product search" />
-      <!-- <mat-hint>Errors appear instantly!</mat-hint> -->
     </mat-form-field>
-    <button mat-flat-button color="primary" type="button">Search</button>
+    <button mat-raised-button color="primary" type="button">Search</button>
   </form>
-  <a [routerLink]="['login']">Login</a>
-  <a [routerLink]="['login']">Sign up</a>
+  <div class="auth-links">
+    <a *ngIf="!userIsAuthenticated" mat-button [routerLink]="['login']"
+      >Login</a
+    >
+    <a *ngIf="!userIsAuthenticated" mat-button [routerLink]="['signup']"
+      >Sign up</a
+    >
+    <button
+      *ngIf="userIsAuthenticated"
+      mat-raised-button
+      color="primary"
+      (click)="onLogout()"
+    >
+      Logout
+    </button>
+  </div>
 </header>
 <div class="main-content">
   <app-product-navigation></app-product-navigation>

@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const Product = require("./models/product");
 const productsRoutes = require("./routes/products");
+const authRoutes = require("./routes/auth");
 const app = express();
 
 mongoose
@@ -25,7 +26,7 @@ app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
     "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
   );
   res.setHeader(
     "Access-Control-Allow-Methods",
@@ -35,5 +36,6 @@ app.use((req, res, next) => {
 });
 
 app.use("/api/products", productsRoutes);
+app.use("/api/auth", authRoutes);
 
 module.exports = app;

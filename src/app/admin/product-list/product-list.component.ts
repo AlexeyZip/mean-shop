@@ -47,7 +47,6 @@ export class ProductListComponent {
         (productData: { products: Product[]; productCount: number }) => {
           this.products = productData.products;
           this.totalProducts = productData.productCount;
-          console.log(this.products);
           this.isLoading = false;
         }
       );

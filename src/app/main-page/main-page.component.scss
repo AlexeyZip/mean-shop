@@ -1,27 +1,57 @@
 .main-page-header {
-    display: grid;
-    grid-template-columns: 1fr 4fr;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  background-color: #3f51b5;
+  color: #fff;
 }
 
-.example-form {
-    // grid-column: 1 / span 2; /* Занимает два трека начиная с первого */
-    justify-self: center;   /* Горизонтальное выравнивание по центру внутри трека */
-    mat-form-field {
-        margin-right: 20px;
-    }
-    button {
-        margin-bottom: 20px;
-    }
+.logo h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.search-form {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  max-width: 600px;
+  margin: 0 20px;
+}
+
+.search-form .search-field {
+  flex-grow: 1;
+  margin-right: 10px;
+}
+
+.search-form .search-field .mat-form-field-wrapper {
+  padding-bottom: 0; /* Убираем лишние отступы */
+}
+
+.search-form .search-field .mat-mdc-form-field-subscript-wrapper {
+  display: none; /* Скрываем элемент, вызывающий проблемы */
+}
+
+.search-form button {
+  height: 36px; /* Высота кнопки */
+  line-height: 36px; /* Выравнивание текста по вертикали */
+}
+
+.auth-links {
+  display: flex;
+  gap: 10px;
+}
+
+.auth-links a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.auth-links a:hover {
+  text-decoration: underline;
 }
 
 .main-content {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 20px; /* Пространство между элементами внутри grid */
-}
-
-.example-full-width {
-    width: 600px;
-    max-width: 600px;
-    min-width: 300px;
+  padding: 20px;
 }
