@@ -14,9 +14,5 @@ import { AuthService } from './auth/auth.service';
 export class AppComponent implements OnInit {
   constructor(private authService: AuthService) {}
   title = 'mean-shop';
-  ngOnInit(): void {
-    setTimeout(() => {
-      this.authService.autoAuth();
-    }, 0);
-  }
+  ngOnInit(): void {}
 }

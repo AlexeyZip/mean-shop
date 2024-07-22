@@ -23,16 +23,17 @@ export const routes: Routes = [
   {
     path: 'admin',
     component: DashboardPageComponent,
+    canActivate: [AuthGuard],
     children: [
       {
         path: 'createProduct',
         component: CreateProductComponent,
-        canActivate: [AuthGuard],
+        // canActivate: [AuthGuard],
       },
       {
         path: 'edit/:productId',
         component: CreateProductComponent,
-        canActivate: [AuthGuard],
+        // canActivate: [AuthGuard],
       },
       { path: 'productList', component: ProductListComponent },
     ],
