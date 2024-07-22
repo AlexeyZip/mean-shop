@@ -77,6 +77,7 @@ export class ProductService {
                 price: product.price,
                 id: product._id,
                 imagePath: product.imagePath,
+                creator: product.creator,
               };
             }),
             maxProducts: productData.maxProducts,
@@ -93,6 +94,17 @@ export class ProductService {
   }
 
   deleteProduct(productId: string): any {
-    return this.http.delete('http://localhost:3000/api/products/' + productId);
+    return this.http
+      .delete('http://localhost:3000/api/products/' + productId)
+      .subscribe(() => {
+        const updatedProducts = this.products.filter(
+          (product: any) => product.id !== productId
+        );
+        this.products = updatedProducts;
+        this.productUpdated.next({
+          products: [...this.products],
+          productCount: this.products.length,
+        });
+      });
   }
 }
