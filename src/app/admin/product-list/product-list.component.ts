@@ -1,13 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ProductService } from '../../shared/product.service';
+import { Product } from '../../interfaces/product.interface';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { Subscription } from 'rxjs';
-import { Product } from '../../interfaces/product.interface';
-import { ProductService } from '../../shared/product.service';
 import { RouterModule } from '@angular/router';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CommonModule } from '@angular/common';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { AuthService } from '../../auth/auth.service';
 
 @Component({
   selector: 'app-product-list',
@@ -23,7 +25,7 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
   templateUrl: './product-list.component.html',
   styleUrl: './product-list.component.scss',
 })
-export class ProductListComponent {
+export class ProductListComponent implements OnInit {
   products: any[] = [];
   isLoading: boolean = false;
   displayedColumns: string[] = [
@@ -34,39 +36,65 @@ export class ProductListComponent {
     'actions',
   ];
   totalProducts = 0;
-  productsPerPage = 2;
+  productsPerPage = 20;
   currentPage = 1;
   pageSizeOptions = [1, 2, 5, 10, 20];
-  private productSub: Subscription = new Subscription();
-  constructor(private productService: ProductService) {}
+  userIsAuthenticated = false;
+  userId: string | null = null;
+
+  constructor(
+    private productService: ProductService,
+    private destroyRef: DestroyRef,
+    private authService: AuthService
+  ) {}
+
   ngOnInit(): void {
     this.isLoading = true;
+    console.log('Component initialized. Fetching products.');
     this.productService
       .getProductUpdateListener()
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(
         (productData: { products: Product[]; productCount: number }) => {
+          console.log('Product data updated:', productData);
           this.products = productData.products;
           this.totalProducts = productData.productCount;
           this.isLoading = false;
         }
       );
-    this.productService.getProducts(this.productsPerPage, this.currentPage);
+    this.authService
+      .getAuthStatusListener()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((isAuthenticated) => {
+        this.userIsAuthenticated = isAuthenticated;
+        this.userId = this.authService.getUserId();
+      });
+    this.productService.setPaginationParams(
+      this.productsPerPage,
+      this.currentPage
+    );
+    this.productService.getProducts();
   }
 
   delete(productId: string) {
     this.isLoading = true;
-    this.productService.deleteProduct(productId).subscribe(() => {
-      this.productService.getProducts(this.productsPerPage, this.currentPage);
-    });
+    console.log('Deleting product with id:', productId);
+    this.productService
+      .deleteProduct(productId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        console.log('Product deleted:', productId);
+      });
   }
 
-  ngOnDestroy(): void {
-    this.productSub.unsubscribe();
-  }
-
-  onChangePage(pageData: PageEvent): any {
+  onChangePage(pageData: PageEvent): void {
     this.currentPage = pageData.pageIndex + 1;
     this.productsPerPage = pageData.pageSize;
-    this.productService.getProducts(this.productsPerPage, this.currentPage);
+    console.log('Page changed:', this.currentPage, this.productsPerPage);
+    this.productService.setPaginationParams(
+      this.productsPerPage,
+      this.currentPage
+    );
+    this.productService.getProducts();
   }
 }

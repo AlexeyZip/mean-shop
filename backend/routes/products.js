@@ -35,6 +35,7 @@ router.post(
       description: req.body.description,
       price: req.body.price,
       imagePath: url + "/images/" + req.file.filename,
+      creator: req.userData.userId,
     });
     product.save().then((createdProduct) => {
       res.status(201).json({
@@ -64,9 +65,17 @@ router.put(
       description: req.body.description,
       price: req.body.price,
       imagePath: imagePath,
+      creator: req.userData.userId,
     });
-    Product.updateOne({ _id: req.params.id }, product).then((result) => {
-      res.status(200).json({ message: "Update successful!" });
+    Product.updateOne(
+      { _id: req.params.id, creator: req.userData.userId },
+      product
+    ).then((result) => {
+      if (result.modifiedCount > 0) {
+        res.status(200).json({ message: "Update successful!" });
+      } else {
+        res.status(401).json({ message: "Not authorized!" });
+      }
     });
   }
 );
@@ -102,11 +111,20 @@ router.get("", (req, res, next) => {
 });
 
 router.delete("/:id", checkAuth, (req, res, next) => {
-  Product.deleteOne({ _id: req.params.id }).then((result) => {
-    res.status(200).json({
-      message: "Product deleted!",
-    });
-  });
+  Product.deleteOne({ _id: req.params.id, creator: req.userData.userId }).then(
+    (result) => {
+      4;
+      if (result.deletedCount > 0) {
+        res.status(200).json({
+          message: "Product deleted!",
+        });
+      } else {
+        res.status(401).json({
+          message: "Not authorized!",
+        });
+      }
+    }
+  );
 });
 
 module.exports = router;

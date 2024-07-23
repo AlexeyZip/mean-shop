@@ -5,6 +5,11 @@ const productSchema = mongoose.Schema({
   description: { type: String, required: true },
   price: { type: Number, required: true },
   imagePath: { type: String, required: true },
+  creator: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Auth",
+    required: true,
+  },
 });
 
 module.exports = mongoose.model("Product", productSchema);

@@ -34,7 +34,7 @@ export class ProductPageComponent implements OnInit, OnDestroy {
           this.products = productData.products;
         }
       );
-    this.productService.getProducts(2, 1);
+    this.productService.getProducts();
   }
 
   onDelete(productId: string): void {
