@@ -65,6 +65,7 @@ router.put(
       description: req.body.description,
       price: req.body.price,
       imagePath: imagePath,
+      creator: req.userData.userId,
     });
     Product.updateOne(
       { _id: req.params.id, creator: req.userData.userId },

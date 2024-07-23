@@ -12,6 +12,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ProductService } from '../../shared/product.service';
 import { Product } from '../../interfaces/product.interface';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { AuthService } from '../../auth/auth.service';
 
 @Component({
   selector: 'app-create-product',
@@ -34,11 +35,13 @@ export class CreateProductComponent implements OnInit {
   private mode: 'create' | 'edit' = 'create';
   private productId: string | null = null;
   private product: any = null;
+  private userId: string | null = null;
 
   constructor(
     private productService: ProductService,
     public route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {
     this.createProductForm = new FormGroup({
       title: new FormControl(null, {
@@ -52,7 +55,6 @@ export class CreateProductComponent implements OnInit {
       }),
       image: new FormControl(null as File | null, {
         validators: [Validators.required],
-        // asyncValidators: [mimeType],
       }),
     });
   }
@@ -63,10 +65,12 @@ export class CreateProductComponent implements OnInit {
         this.mode = 'edit';
         this.productId = paramMap.get('productId')!;
         this.isLoading = true;
+        this.userId = this.authService.getUserId();
         this.productService
           .getProduct(this.productId)
           .subscribe((productData: Product) => {
             this.product = productData;
+            console.log(this.product);
             this.createProductForm.setValue({
               title: this.product?.title ?? null,
               description: this.product?.description ?? null,
@@ -82,22 +86,45 @@ export class CreateProductComponent implements OnInit {
     });
   }
 
-  onSavePost(): void {
+  onSaveProduct(): void {
     if (this.createProductForm.invalid) {
       return;
     }
+    this.isLoading = true;
     const product = {
       id: this.productId ?? null,
       title: this.createProductForm.value.title ?? '',
       description: this.createProductForm.value.description ?? '',
       price: this.createProductForm.value.price ?? 0,
       image: this.createProductForm.value.image ?? null,
+      creator: this.userId,
     };
-    this.mode !== 'edit'
-      ? this.productService.createProduct(product)
-      : this.productService.updateProduct(product);
-    this.isLoading = true;
-    this.createProductForm.reset();
+
+    if (this.mode === 'create') {
+      this.productService.createProduct(product).subscribe({
+        next: () => {
+          this.isLoading = false;
+          this.createProductForm.reset();
+          this.router.navigate(['/admin/productList']);
+        },
+        error: (error) => {
+          this.isLoading = false;
+          console.error('Error creating product:', error);
+        },
+      });
+    } else {
+      this.productService.updateProduct(product).subscribe({
+        next: () => {
+          this.isLoading = false;
+          this.createProductForm.reset();
+          this.router.navigate(['/admin/productList']);
+        },
+        error: (error) => {
+          this.isLoading = false;
+          console.error('Error updating product:', error);
+        },
+      });
+    }
   }
 
   onImagePicked(event: Event): void {
