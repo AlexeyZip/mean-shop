@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, DestroyRef, OnInit } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -13,6 +13,8 @@ import { ProductService } from '../../shared/product.service';
 import { Product } from '../../interfaces/product.interface';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
+import { Subscription } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-create-product',
@@ -41,7 +43,8 @@ export class CreateProductComponent implements OnInit {
     private productService: ProductService,
     public route: ActivatedRoute,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private destroyRef: DestroyRef
   ) {
     this.createProductForm = new FormGroup({
       title: new FormControl(null, {
@@ -60,6 +63,12 @@ export class CreateProductComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.authService
+      .getAuthStatusListener()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((authStatus) => {
+        this.isLoading = false;
+      });
     this.route.paramMap.subscribe((paramMap: ParamMap) => {
       if (paramMap.has('productId')) {
         this.mode = 'edit';

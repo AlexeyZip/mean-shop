@@ -34,8 +34,13 @@ export class AuthService {
     const authData: AuthData = { email, password };
     this.http
       .post('http://localhost:3000/api/auth/signup', authData)
-      .subscribe((res) => {
-        console.log(res);
+      .subscribe({
+        next: () => {
+          this.router.navigate(['/admin/createProduct']);
+        },
+        error: () => {
+          this.authStatusListener.next(false);
+        },
       });
   }
 
@@ -66,6 +71,7 @@ export class AuthService {
         },
         error: (err) => {
           console.error('Login error:', err);
+          this.authStatusListener.next(false);
         },
       });
   }

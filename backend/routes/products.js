@@ -37,15 +37,22 @@ router.post(
       imagePath: url + "/images/" + req.file.filename,
       creator: req.userData.userId,
     });
-    product.save().then((createdProduct) => {
-      res.status(201).json({
-        message: "Product was added successfully",
-        product: {
-          ...createdProduct,
-          id: createdProduct._id,
-        },
+    product
+      .save()
+      .then((createdProduct) => {
+        res.status(201).json({
+          message: "Product was added successfully",
+          product: {
+            ...createdProduct,
+            id: createdProduct._id,
+          },
+        });
+      })
+      .catch((error) => {
+        res.status(500).json({
+          message: "Creating a post failed!",
+        });
       });
-    });
   }
 );
 
@@ -70,22 +77,34 @@ router.put(
     Product.updateOne(
       { _id: req.params.id, creator: req.userData.userId },
       product
-    ).then((result) => {
-      if (result.modifiedCount > 0) {
-        res.status(200).json({ message: "Update successful!" });
-      } else {
-        res.status(401).json({ message: "Not authorized!" });
-      }
-    });
+    )
+      .then((result) => {
+        if (result.modifiedCount > 0) {
+          res.status(200).json({ message: "Update successful!" });
+        } else {
+          res.status(401).json({ message: "Not authorized!" });
+        }
+      })
+      .catch((error) => {
+        res.status(500).json({
+          message: "Couldn't update product!",
+        });
+      });
   }
 );
 
 router.get("/:id", (req, res, next) => {
-  Product.findById(req.params.id).then((product) => {
-    product
-      ? res.status(200).json(product)
-      : res.status(404).json({ message: "Product not found!" });
-  });
+  Product.findById(req.params.id)
+    .then((product) => {
+      product
+        ? res.status(200).json(product)
+        : res.status(404).json({ message: "Product not found!" });
+    })
+    .catch((error) => {
+      res.status(500).json({
+        message: "Fetching product failed!",
+      });
+    });
 });
 
 router.get("", (req, res, next) => {
@@ -107,13 +126,17 @@ router.get("", (req, res, next) => {
         products: fetchedProducts,
         maxProducts: count,
       });
+    })
+    .catch((error) => {
+      res.status(500).json({
+        message: "Fetching products failed!",
+      });
     });
 });
 
 router.delete("/:id", checkAuth, (req, res, next) => {
-  Product.deleteOne({ _id: req.params.id, creator: req.userData.userId }).then(
-    (result) => {
-      4;
+  Product.deleteOne({ _id: req.params.id, creator: req.userData.userId })
+    .then((result) => {
       if (result.deletedCount > 0) {
         res.status(200).json({
           message: "Product deleted!",
@@ -123,8 +146,12 @@ router.delete("/:id", checkAuth, (req, res, next) => {
           message: "Not authorized!",
         });
       }
-    }
-  );
+    })
+    .catch((error) => {
+      res.status(500).json({
+        message: "Fetching product failed!",
+      });
+    });
 });
 
 module.exports = router;

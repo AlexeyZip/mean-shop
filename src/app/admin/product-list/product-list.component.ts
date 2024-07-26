@@ -56,7 +56,6 @@ export class ProductListComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(
         (productData: { products: Product[]; productCount: number }) => {
-          console.log('Product data updated:', productData);
           this.products = productData.products;
           this.totalProducts = productData.productCount;
           this.isLoading = false;
@@ -78,19 +77,23 @@ export class ProductListComponent implements OnInit {
 
   delete(productId: string) {
     this.isLoading = true;
-    console.log('Deleting product with id:', productId);
     this.productService
       .deleteProduct(productId)
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => {
-        console.log('Product deleted:', productId);
-      });
+      .subscribe(
+        () => {
+          console.log('Product deleted:', productId);
+          this.productService.getProducts();
+        },
+        () => {
+          this.isLoading = false;
+        }
+      );
   }
 
   onChangePage(pageData: PageEvent): void {
     this.currentPage = pageData.pageIndex + 1;
     this.productsPerPage = pageData.pageSize;
-    console.log('Page changed:', this.currentPage, this.productsPerPage);
     this.productService.setPaginationParams(
       this.productsPerPage,
       this.currentPage
