@@ -13,9 +13,21 @@
     <a *ngIf="!userIsAuthenticated" mat-button [routerLink]="['login']"
       >Login</a
     >
-    <a *ngIf="!userIsAuthenticated" mat-button [routerLink]="['signup']"
-      >Sign up</a
+    <a
+      *ngIf="!userIsAuthenticated"
+      mat-button
+      [routerLink]="['/signup']"
+      [queryParams]="{ role: 'user' }"
+      >Sign up as User</a
     >
+    <a
+      *ngIf="!userIsAuthenticated"
+      mat-button
+      [routerLink]="['/signup']"
+      [queryParams]="{ role: 'admin' }"
+      >Sign up as Admin</a
+    >
+
     <button
       *ngIf="userIsAuthenticated"
       mat-raised-button
