@@ -3,6 +3,7 @@ const multer = require("multer");
 const Product = require("../models/product");
 const router = express.Router();
 const checkAuth = require("../middleware/check-auth");
+const checkAdmin = require("../middleware/check-admin");
 const MIME_TYPE_MAP = {
   "image/png": "png",
   "image/jpeg": "jpg",
@@ -27,6 +28,7 @@ const storage = multer.diskStorage({
 router.post(
   "",
   checkAuth,
+  checkAdmin,
   multer({ storage: storage }).single("image"),
   (req, res, next) => {
     const url = req.protocol + "://" + req.get("host");
@@ -59,6 +61,7 @@ router.post(
 router.put(
   "/:id",
   checkAuth,
+  checkAdmin,
   multer({ storage: storage }).single("image"),
   (req, res, next) => {
     let imagePath = req.body.imagePath;
@@ -134,7 +137,7 @@ router.get("", (req, res, next) => {
     });
 });
 
-router.delete("/:id", checkAuth, (req, res, next) => {
+router.delete("/:id", checkAuth, checkAdmin, (req, res, next) => {
   Product.deleteOne({ _id: req.params.id, creator: req.userData.userId })
     .then((result) => {
       if (result.deletedCount > 0) {

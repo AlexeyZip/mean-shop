@@ -44,4 +44,6 @@ export class ProductPageComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.productSub.unsubscribe();
   }
+
+  addItemToCart(): void {}
 }

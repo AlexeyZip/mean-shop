@@ -5,10 +5,12 @@ const router = express.Router();
 const Auth = require("../models/auth");
 
 router.post("/signup", (req, res, next) => {
+  const role = req.body.role || "user";
   bcrypt.hash(req.body.password, 10).then((hash) => {
     const auth = new Auth({
       email: req.body.email,
       password: hash,
+      role: role,
     });
     auth
       .save()
@@ -37,7 +39,11 @@ router.post("/login", (req, res, next) => {
     .then((result) => {
       if (!result) return failedAuth(res);
       const token = jwt.sign(
-        { email: fetchedUser.email, userId: fetchedUser._id },
+        {
+          email: fetchedUser.email,
+          userId: fetchedUser._id,
+          userRole: fetchedUser.role,
+        },
         "secret_string",
         { expiresIn: "1h" }
       );
@@ -45,6 +51,7 @@ router.post("/login", (req, res, next) => {
         token: token,
         expiresIn: 3600,
         userId: fetchedUser._id,
+        userRole: fetchedUser.role,
       });
     })
     .catch((err) => {
