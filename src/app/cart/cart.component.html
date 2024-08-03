@@ -1,0 +1,47 @@
+<mat-card appearance="outlined" *ngFor="let cartItem of cart">
+  <mat-card-header>
+    <mat-card-title>{{ cartItem.product.title }}</mat-card-title>
+    <mat-card-subtitle>Product in your cart</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="content-wrapper">
+      <div>
+        <img
+          [src]="cartItem.product.imagePath"
+          [alt]="cartItem.product.title"
+        />
+      </div>
+      <div>
+        <p>{{ cartItem.product.description }}</p>
+      </div>
+      <div>
+        <mat-form-field appearance="fill">
+          <mat-label>quantity</mat-label>
+          <input
+            matInput
+            type="number"
+            [(ngModel)]="cartItem.quantity"
+            (ngModelChange)="updateCart()"
+            min="1"
+          />
+        </mat-form-field>
+        <button
+          mat-button
+          color="warn"
+          (click)="removeFromCart(cartItem.product.id)"
+        >
+          Remove
+        </button>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>
+
+<button
+  mat-raised-button
+  color="primary"
+  (click)="onPlaceOrder()"
+  *ngIf="cart.length > 0"
+>
+  Create Order
+</button>

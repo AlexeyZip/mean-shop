@@ -1,13 +1,14 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ProductService } from '../shared/product/product.service';
 import { CommonModule } from '@angular/common';
-import { Product } from '../interfaces/product.interface';
 import { Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { CreateProductComponent } from '../admin/create-product/create-product.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { RouterModule } from '@angular/router';
+import { CartService } from '../shared/cart/cart.service';
+import { Product } from '../shared/product/product.model';
 
 @Component({
   selector: 'app-product-page',
@@ -25,7 +26,10 @@ import { RouterModule } from '@angular/router';
 export class ProductPageComponent implements OnInit, OnDestroy {
   products: any[] = [];
   private productSub: Subscription = new Subscription();
-  constructor(private productService: ProductService) {}
+  constructor(
+    private productService: ProductService,
+    private cartService: CartService
+  ) {}
   ngOnInit(): void {
     this.productService
       .getProductUpdateListener()
@@ -45,5 +49,7 @@ export class ProductPageComponent implements OnInit, OnDestroy {
     this.productSub.unsubscribe();
   }
 
-  addItemToCart(): void {}
+  addItemToCart(product: Product): void {
+    this.cartService.addToCart(product);
+  }
 }

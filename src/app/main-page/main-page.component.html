@@ -27,7 +27,6 @@
       [queryParams]="{ role: 'admin' }"
       >Sign up as Admin</a
     >
-
     <button
       *ngIf="userIsAuthenticated"
       mat-raised-button
@@ -35,6 +34,9 @@
       (click)="onLogout()"
     >
       Logout
+    </button>
+    <button mat-icon-button [routerLink]="['/cart']" aria-label="Cart">
+      <mat-icon matBadge="{{ cartItemCount }}">shopping_cart</mat-icon>
     </button>
   </div>
 </header>

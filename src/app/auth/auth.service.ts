@@ -75,7 +75,9 @@ export class AuthService {
               this.userId,
               this.userRole
             );
-            this.router.navigate(['/admin/createProduct']);
+            this.userRole === 'admin'
+              ? this.router.navigate(['/admin/createProduct'])
+              : this.router.navigate(['/product']);
           }
         },
         error: (err) => {
