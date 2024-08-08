@@ -49,22 +49,16 @@ export class CartComponent implements OnInit {
   }
 
   loadCart(): void {
-    this.cart = this.cartService.getCartItems();
+    this.cart = this.cartService.cart;
   }
 
-  //   addToCart(product: Product): void {
-  //     this.cartService.addToCart(product);
-  //     this.cart = this.cartService.getCartItems();
-  //   }
-
   updateCart(): void {
-    this.cartService.updateCart();
-    this.cart = this.cartService.getCartItems();
+    this.cartService.cart = this.cart.slice();
   }
 
   removeFromCart(productId: string | null): void {
     this.cart = this.cart.filter((item) => item.product.id !== productId);
-    this.cartService.updateCart();
+    this.cartService.cart = this.cart.slice();
   }
 
   onPlaceOrder(): void {
