@@ -5,20 +5,25 @@ exports.createOrder = (req, res, next) => {
   const products = req.body.products;
   let totalPrice = 0;
 
+  console.log("Received products:", products);
+
   Product.find({ _id: { $in: products.map((p) => p.productId) } })
     .then((foundProducts) => {
+      console.log("Found products:", foundProducts);
+
       foundProducts.forEach((product) => {
         const orderProduct = products.find((p) => p.productId == product._id);
         totalPrice += product.price * orderProduct.quantity;
       });
-
+      console.log("req------------", req.body);
       const order = new Order({
         products: products.map((p) => ({
-          product: p.productId,
+          productId: p.productId,
           quantity: p.quantity,
         })),
         user: req.userData.userId,
         totalPrice: totalPrice,
+        deliveryInfo: req.body.deliveryInfo,
       });
 
       return order.save();
@@ -30,6 +35,7 @@ exports.createOrder = (req, res, next) => {
       });
     })
     .catch((error) => {
+      console.error("Error creating order:", error);
       res.status(500).json({
         message: "Placing order failed!",
       });
@@ -37,15 +43,28 @@ exports.createOrder = (req, res, next) => {
 };
 
 exports.getOrders = (req, res, next) => {
-  Order.find({ user: req.userData.userId })
-    .populate("products.product")
-    .then((orders) => {
+  const pageSize = +req.query.pagesize;
+  const currentPage = req.query.page;
+  const productQuery = Order.find();
+  let fetchedOrders;
+  if (pageSize && currentPage) {
+    productQuery.skip(pageSize * (currentPage - 1)).limit(pageSize);
+  }
+  productQuery
+    .populate("products")
+    .then((documents) => {
+      fetchedOrders = documents;
+      return Order.countDocuments();
+    })
+    .then((count) => {
       res.status(200).json({
         message: "Orders fetched successfully",
-        orders: orders,
+        orders: fetchedOrders,
+        maxOrders: count,
       });
     })
     .catch((error) => {
+      console.error("Error fetching orders:", error);
       res.status(500).json({
         message: "Fetching orders failed!",
       });

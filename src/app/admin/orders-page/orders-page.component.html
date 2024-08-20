@@ -1,1 +1,49 @@
-<p>orders-page works!</p>
+<!-- <mat-spinner *ngIf="isLoading"></mat-spinner> -->
+<table mat-table [dataSource]="orders" class="mat-elevation-z8">
+  <ng-container matColumnDef="createdAt">
+    <th mat-header-cell *matHeaderCellDef>Created At</th>
+    <td mat-cell *matCellDef="let element">
+      {{ element.createdAt | date : "dd/MM/yyyy, HH:mm" }}
+    </td>
+  </ng-container>
+  <ng-container matColumnDef="productsQuantity">
+    <th mat-header-cell *matHeaderCellDef>Products Quantity</th>
+    <td mat-cell *matCellDef="let element">{{ element.products.length }}</td>
+  </ng-container>
+  <ng-container matColumnDef="status">
+    <th mat-header-cell *matHeaderCellDef>Status</th>
+    <td mat-cell *matCellDef="let element">{{ element.status }}</td>
+  </ng-container>
+  <ng-container matColumnDef="totalPrice">
+    <th mat-header-cell *matHeaderCellDef>Total Price</th>
+    <td mat-cell *matCellDef="let element">{{ element.totalPrice }}</td>
+  </ng-container>
+  <!-- <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef>Actions</th>
+    <td mat-cell *matCellDef="let element">
+      <button
+        mat-icon-button
+        [routerLink]="['/admin/edit', element.id]"
+        [disabled]="userIsAuthenticated && userId !== element.creator"
+      >
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button mat-icon-button (click)="delete(element.id)">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </td>
+  </ng-container> -->
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+</table>
+<mat-paginator
+  *ngIf="orders.length > 0"
+  [length]="totalOrders"
+  [pageSizeOptions]="pageSizeOptions"
+  (page)="onChangePage($event)"
+></mat-paginator>
+
+<div class="centre-message" *ngIf="!orders.length">
+  <h1>No items to display</h1>
+</div>

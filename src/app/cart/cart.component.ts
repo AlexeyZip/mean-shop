@@ -3,12 +3,21 @@ import { OrderService } from '../shared/order/order.service';
 import { Product } from '../shared/product/product.model';
 import { Order } from '../shared/order/order.model';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
 import { CartService } from '../shared/cart/cart.service';
+import { AuthService } from '../auth/auth.service';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { AngularMaterialModule } from '../angular-material.module';
 
 @Component({
   standalone: true,
@@ -22,9 +31,13 @@ import { CartService } from '../shared/cart/cart.service';
     MatFormFieldModule,
     MatButtonModule,
     MatCardModule,
+    ReactiveFormsModule,
+    AngularMaterialModule,
+    MatProgressSpinnerModule,
   ],
 })
 export class CartComponent implements OnInit {
+  createOrderForm: FormGroup;
   cart: {
     product: {
       id: string | null;
@@ -39,8 +52,24 @@ export class CartComponent implements OnInit {
 
   constructor(
     private orderService: OrderService,
-    private cartService: CartService
-  ) {}
+    private cartService: CartService,
+    private authService: AuthService
+  ) {
+    this.createOrderForm = new FormGroup({
+      address: new FormControl(null, {
+        validators: [Validators.required, Validators.minLength(3)],
+      }),
+      city: new FormControl(null, {
+        validators: [Validators.required],
+      }),
+      postalCode: new FormControl(null, {
+        validators: [Validators.required],
+      }),
+      country: new FormControl(null as File | null, {
+        validators: [Validators.required],
+      }),
+    });
+  }
 
   ngOnInit(): void {
     console.log('cart');
@@ -67,19 +96,26 @@ export class CartComponent implements OnInit {
       quantity: item.quantity,
     }));
 
+    const deliveryInfo = {
+      address: this.createOrderForm.get('address')?.value,
+      city: this.createOrderForm.get('city')?.value,
+      postalCode: this.createOrderForm.get('postalCode')?.value,
+      country: this.createOrderForm.get('country')?.value,
+    };
+
     const newOrder: Order = {
       id: null,
       products: orderProducts,
-      user: 'user-id',
+      user: this.authService.getUserId()!,
       totalPrice: this.calculateTotalPrice(),
       status: 'Pending',
       createdAt: new Date(),
+      deliveryInfo,
     };
 
     this.orderService.createOrder(newOrder).subscribe((createdOrder) => {
       this.cartService.clearCart();
       this.cart = this.cartService.getCartItems();
-      console.log('Order placed successfully:', createdOrder);
     });
   }
 
@@ -89,4 +125,6 @@ export class CartComponent implements OnInit {
       0
     );
   }
+
+  onSaveOrder() {}
 }
