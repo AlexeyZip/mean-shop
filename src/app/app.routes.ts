@@ -1,41 +1,81 @@
 import { Routes } from '@angular/router';
-import { MainPageComponent } from './main-page/main-page.component';
-import { ProductPageComponent } from './product-page/product-page.component';
-import { DashboardPageComponent } from './admin/dashboard-page/dashboard-page.component';
-import { CreateProductComponent } from './admin/create-product/create-product.component';
-import { ProductListComponent } from './admin/product-list/product-list.component';
-import { ProductDetailsComponent } from './product-details/product-details.component';
-import { LoginComponent } from './auth/login/login.component';
-import { SignupnComponent } from './auth/signup/signup.component';
 import { AuthGuard } from './auth/auth.guard';
 
 export const routes: Routes = [
   {
     path: '',
-    component: MainPageComponent,
+    loadComponent: () =>
+      import('./main-page/main-page.component').then(
+        (m) => m.MainPageComponent
+      ),
     children: [
-      { path: 'product', component: ProductPageComponent },
-      { path: 'details/:productId', component: ProductDetailsComponent },
+      {
+        path: 'product',
+        loadComponent: () =>
+          import('./product-page/product-page.component').then(
+            (m) => m.ProductPageComponent
+          ),
+      },
+      {
+        path: 'details/:productId',
+        loadComponent: () =>
+          import('./product-details/product-details.component').then(
+            (m) => m.ProductDetailsComponent
+          ),
+      },
+      {
+        path: 'cart',
+        loadComponent: () =>
+          import('./cart/cart.component').then((m) => m.CartComponent),
+      },
     ],
   },
-  { path: 'login', component: LoginComponent },
-  { path: 'signup', component: SignupnComponent },
+  {
+    path: 'login',
+    loadComponent: () =>
+      import('./auth/login/login.component').then((m) => m.LoginComponent),
+  },
+  {
+    path: 'signup',
+    loadComponent: () =>
+      import('./auth/signup/signup.component').then((m) => m.SignupnComponent),
+  },
   {
     path: 'admin',
-    component: DashboardPageComponent,
+    loadComponent: () =>
+      import('./admin/dashboard-page/dashboard-page.component').then(
+        (m) => m.DashboardPageComponent
+      ),
     canActivate: [AuthGuard],
     children: [
       {
         path: 'createProduct',
-        component: CreateProductComponent,
-        // canActivate: [AuthGuard],
+        loadComponent: () =>
+          import('./admin/create-product/create-product.component').then(
+            (m) => m.CreateProductComponent
+          ),
       },
       {
         path: 'edit/:productId',
-        component: CreateProductComponent,
-        // canActivate: [AuthGuard],
+        loadComponent: () =>
+          import('./admin/create-product/create-product.component').then(
+            (m) => m.CreateProductComponent
+          ),
       },
-      { path: 'productList', component: ProductListComponent },
+      {
+        path: 'productList',
+        loadComponent: () =>
+          import('./admin/product-list/product-list.component').then(
+            (m) => m.ProductListComponent
+          ),
+      },
+      {
+        path: 'orders',
+        loadComponent: () =>
+          import('./admin/orders-page/orders-page.component').then(
+            (m) => m.OrdersComponent
+          ),
+      },
     ],
   },
 ];

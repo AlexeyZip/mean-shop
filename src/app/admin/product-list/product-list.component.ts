@@ -1,6 +1,6 @@
 import { Component, OnInit, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ProductService } from '../../shared/product.service';
+import { ProductService } from '../../shared/product/product.service';
 import { Product } from '../../interfaces/product.interface';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';

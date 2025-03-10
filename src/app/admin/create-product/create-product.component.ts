@@ -9,7 +9,7 @@ import {
 import { AngularMaterialModule } from '../../angular-material.module';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { ProductService } from '../../shared/product.service';
+import { ProductService } from '../../shared/product/product.service';
 import { Product } from '../../interfaces/product.interface';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';

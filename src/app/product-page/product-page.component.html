@@ -1,14 +1,4 @@
-<!-- <app-create-product></app-create-product> -->
 <h3>Products</h3>
-<!-- <div *ngFor="let product of products">
-    <div class="">Product Name: {{product.title}}</div>
-    <div class="">Product Description:  {{product.description}}</div>
-    <div class="">Image:  {{product.image}}</div>
-    <div class="">Price:  {{product.price}}</div>
-    <div class="">
-        <button>More Details</button>
-    </div>
-</div> -->
 <div class="products">
   <mat-card class="product-card" *ngFor="let product of products">
     <mat-card-header>
@@ -29,7 +19,7 @@
       <button mat-button [routerLink]="['/details', product.id]">
         More Details
       </button>
-      <button mat-button onclick="addItemToCart()">Add to cart</button>
+      <button mat-button (click)="addItemToCart(product)">Add to cart</button>
     </mat-card-actions>
   </mat-card>
 </div>

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, ParamMap, RouterModule } from '@angular/router';
-import { ProductService } from '../shared/product.service';
-import { Product } from '../shared/product.model';
+import { ProductService } from '../shared/product/product.service';
+import { Product } from '../shared/product/product.model';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
