@@ -4,7 +4,7 @@ import {
   importProvidersFrom,
 } from '@angular/core';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
-import { provideClientHydration } from '@angular/platform-browser';
+import { Meta, provideClientHydration, Title } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import {
   HttpClientModule,
@@ -18,6 +18,7 @@ import { httpInterceptorProviders } from './http-interceptors';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    importProvidersFrom(Title, Meta),
     provideRouter(routes, withComponentInputBinding()),
     provideClientHydration(),
     provideAnimations(),
