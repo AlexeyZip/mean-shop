@@ -24,7 +24,14 @@ export class AuthService {
   }
 
   getAuthStatusListener(): Observable<boolean> {
+    console.log('getAuthStatusListener called');
     return this.authStatusListener.asObservable();
+  }
+
+  isAuthNow() {
+    console.log('this.isAuthenticated---------------->2', this.isAuthenticated);
+
+    return this.isAuthenticated;
   }
 
   getUserId() {

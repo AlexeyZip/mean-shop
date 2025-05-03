@@ -15,6 +15,7 @@ import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
 import { Subscription } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 @Component({
   selector: 'app-create-product',
@@ -26,6 +27,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     AngularMaterialModule,
     CommonModule,
     MatProgressSpinnerModule,
+    MatAutocompleteModule,
   ],
   templateUrl: './create-product.component.html',
   styleUrl: './create-product.component.scss',
@@ -34,6 +36,7 @@ export class CreateProductComponent implements OnInit {
   imagePreview: string = '';
   isLoading: boolean = false;
   createProductForm: FormGroup;
+  availableTypes: any[] = ['smartphones', 'tv', 'headphone'];
   private mode: 'create' | 'edit' = 'create';
   private productId: string | null = null;
   private product: any = null;
@@ -51,6 +54,9 @@ export class CreateProductComponent implements OnInit {
         validators: [Validators.required, Validators.minLength(3)],
       }),
       description: new FormControl(null, {
+        validators: [Validators.required],
+      }),
+      productType: new FormControl(null, {
         validators: [Validators.required],
       }),
       price: new FormControl(null, {
@@ -83,6 +89,7 @@ export class CreateProductComponent implements OnInit {
             this.createProductForm.setValue({
               title: this.product?.title ?? null,
               description: this.product?.description ?? null,
+              productType: this.product.productType ?? null,
               price: this.product?.price ?? null,
               image: this.product.imagePath ?? null,
             });
@@ -104,11 +111,12 @@ export class CreateProductComponent implements OnInit {
       id: this.productId ?? null,
       title: this.createProductForm.value.title ?? '',
       description: this.createProductForm.value.description ?? '',
+      productType: this.createProductForm.value.productType ?? '',
       price: this.createProductForm.value.price ?? 0,
       image: this.createProductForm.value.image ?? null,
       creator: this.userId,
     };
-
+    console.log('product------>', product);
     if (this.mode === 'create') {
       this.productService.createProduct(product).subscribe({
         next: () => {

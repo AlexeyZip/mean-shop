@@ -10,11 +10,11 @@
     <button mat-raised-button color="primary" type="button">Search</button>
   </form>
   <div class="auth-links">
-    <a *ngIf="!userIsAuthenticated" mat-button [routerLink]="['login']"
+    <a *ngIf="!userIsAuthenticated()" mat-button [routerLink]="['login']"
       >Login</a
     >
     <a
-      *ngIf="!userIsAuthenticated"
+      *ngIf="!userIsAuthenticated()"
       mat-button
       [routerLink]="['/signup']"
       [queryParams]="{ role: 'user' }"
@@ -22,14 +22,14 @@
     >
     <a mat-button [routerLink]="['/orders']">Orders</a>
     <a
-      *ngIf="!userIsAuthenticated"
+      *ngIf="!userIsAuthenticated()"
       mat-button
       [routerLink]="['/signup']"
       [queryParams]="{ role: 'admin' }"
       >Sign up as Admin</a
     >
     <button
-      *ngIf="userIsAuthenticated"
+      *ngIf="userIsAuthenticated()"
       mat-raised-button
       color="primary"
       (click)="onLogout()"
