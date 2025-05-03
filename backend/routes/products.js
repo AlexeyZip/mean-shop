@@ -35,6 +35,7 @@ router.post(
     const product = new Product({
       title: req.body.title,
       description: req.body.description,
+      productType: req.body.productType,
       price: req.body.price,
       imagePath: url + "/images/" + req.file.filename,
       creator: req.userData.userId,
@@ -73,6 +74,7 @@ router.put(
       _id: req.body.id,
       title: req.body.title,
       description: req.body.description,
+      productType: req.body.productType,
       price: req.body.price,
       imagePath: imagePath,
       creator: req.userData.userId,
@@ -112,16 +114,27 @@ router.get("/:id", (req, res, next) => {
 
 router.get("", (req, res, next) => {
   const pageSize = +req.query.pagesize;
-  const currentPage = req.query.page;
-  const productQuery = Product.find();
-  let fetchedProducts;
-  if (pageSize && currentPage) {
-    productQuery.skip(pageSize * (currentPage - 1)).limit(pageSize);
+  const currentPage = +req.query.page;
+  const category = req.query.category;
+
+  const query = {};
+  if (category && category !== "all") {
+    query.productType = category; // исправлено на productType
   }
+
+  let productQuery = Product.find(query);
+  let fetchedProducts;
+
+  if (pageSize && currentPage) {
+    productQuery = productQuery
+      .skip(pageSize * (currentPage - 1))
+      .limit(pageSize);
+  }
+
   productQuery
     .then((documents) => {
       fetchedProducts = documents;
-      return Product.countDocuments();
+      return Product.countDocuments(query);
     })
     .then((count) => {
       res.status(200).json({

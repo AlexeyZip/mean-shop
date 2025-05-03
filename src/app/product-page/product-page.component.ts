@@ -6,7 +6,7 @@ import { switchMap } from 'rxjs/operators';
 import { CreateProductComponent } from '../admin/create-product/create-product.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CartService } from '../shared/cart/cart.service';
 import { Product } from '../shared/product/product.model';
 
@@ -26,9 +26,11 @@ import { Product } from '../shared/product/product.model';
 export class ProductPageComponent implements OnInit, OnDestroy {
   products: any[] = [];
   private productSub: Subscription = new Subscription();
+  private routeSub: Subscription = new Subscription();
   constructor(
     private productService: ProductService,
-    private cartService: CartService
+    private cartService: CartService,
+    private route: ActivatedRoute
   ) {}
   ngOnInit(): void {
     this.productService
@@ -38,7 +40,10 @@ export class ProductPageComponent implements OnInit, OnDestroy {
           this.products = productData.products;
         }
       );
-    this.productService.getProducts();
+    this.routeSub = this.route.params.subscribe((params) => {
+      const category = params['category'] || 'all';
+      this.productService.getProducts(category);
+    });
   }
 
   onDelete(productId: string): void {

@@ -1,9 +1,11 @@
 import {
+  ChangeDetectorRef,
   Component,
   DestroyRef,
-  inject,
+  effect,
   OnDestroy,
   OnInit,
+  signal,
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -33,68 +35,48 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   templateUrl: './main-page.component.html',
   styleUrls: ['./main-page.component.scss'],
 })
-export class MainPageComponent implements OnInit, OnDestroy {
-  private title = inject(Title);
-  private meta = inject(Meta);
-  private authService = inject(AuthService);
-  private cartService = inject(CartService);
-  private destroyRef = inject(DestroyRef);
-
-  userIsAuthenticated: boolean = false;
+export class MainPageComponent implements OnInit {
+  userIsAuthenticated = signal(false);
   cartItemCount: number = 0;
-  private authListenerSub!: Subscription;
+
+  constructor(
+    public router: Router,
+    private authService: AuthService,
+    private cartService: CartService,
+    private destroyRef: DestroyRef,
+    private cdr: ChangeDetectorRef
+  ) {
+    effect(() => {
+      console.log('Signal changed:', this.userIsAuthenticated());
+    });
+  }
 
   ngOnInit(): void {
-    this.title.setTitle('MEAN Shop - The Best Online Store');
-
-    this.meta.updateTag({
-      name: 'description',
-      content: 'The best store for products at great prices. Shop now!',
-    });
-    this.meta.updateTag({
-      name: 'keywords',
-      content: 'shop, products, online store, MEAN',
-    });
-
-    this.meta.updateTag({
-      property: 'og:title',
-      content: 'MEAN Shop - Online Store',
-    });
-    this.meta.updateTag({
-      property: 'og:description',
-      content:
-        'A wide selection of products at excellent prices. Fast delivery!',
-    });
-    this.meta.updateTag({
-      property: 'og:image',
-      content: 'https://example.com/assets/shop-banner.jpg',
-    });
-    this.meta.updateTag({
-      property: 'og:url',
-      content: 'https://example.com/',
-    });
-
-    this.meta.updateTag({
-      name: 'twitter:card',
-      content: 'summary_large_image',
-    });
-    this.meta.updateTag({ name: 'twitter:title', content: 'MEAN Shop' });
-    this.meta.updateTag({
-      name: 'twitter:description',
-      content: 'Shop the best products with fast delivery.',
-    });
-    this.meta.updateTag({
-      name: 'twitter:image',
-      content: 'https://example.com/assets/shop-banner.jpg',
-    });
-
+    console.log('MainPageComponent created');
     this.cartService.loadCart();
-    this.userIsAuthenticated = this.authService.getAuthStatus();
-    this.updateCartItemCount();
-    this.authListenerSub = this.authService
+    // this.userIsAuthenticated =
+    this.authService
       .getAuthStatusListener()
-      .subscribe((isAuthenticated: boolean) => {
-        this.userIsAuthenticated = isAuthenticated;
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((isAuthenticated) => {
+        console.log('isAuthenticated------->', isAuthenticated);
+        // setTimeout(() => {
+        this.userIsAuthenticated.set(isAuthenticated);
+        // },)
+
+        this.cdr.detectChanges();
+      });
+    this.updateCartItemCount();
+
+    // this.authListenerSub = this.authService
+    //   .getAuthStatusListener()
+    //   .subscribe((isAuthenticated: boolean) => {
+    //     this.userIsAuthenticated = isAuthenticated;
+    //   });
+    this.cartService.cartItemCount$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((count: any) => {
+        this.cartItemCount = count;
       });
     this.cartService.cartItemCount$
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -105,12 +87,6 @@ export class MainPageComponent implements OnInit, OnDestroy {
 
   onLogout() {
     this.authService.logout();
-  }
-
-  ngOnDestroy(): void {
-    if (this.authListenerSub) {
-      this.authListenerSub.unsubscribe();
-    }
   }
 
   private updateCartItemCount(): void {

@@ -1,5 +1,8 @@
 import { Routes } from '@angular/router';
 import { AuthGuard } from './auth/auth.guard';
+import { CartComponent } from './cart/cart.component';
+import { ProductPageComponent } from './product-page/product-page.component';
+import { ProductDetailsComponent } from './product-details/product-details.component';
 
 export const routes: Routes = [
   {
@@ -9,25 +12,11 @@ export const routes: Routes = [
         (m) => m.MainPageComponent
       ),
     children: [
-      {
-        path: 'product',
-        loadComponent: () =>
-          import('./product-page/product-page.component').then(
-            (m) => m.ProductPageComponent
-          ),
-      },
-      {
-        path: 'details/:productId',
-        loadComponent: () =>
-          import('./product-details/product-details.component').then(
-            (m) => m.ProductDetailsComponent
-          ),
-      },
-      {
-        path: 'cart',
-        loadComponent: () =>
-          import('./cart/cart.component').then((m) => m.CartComponent),
-      },
+      { path: 'product/:category', component: ProductPageComponent },
+      { path: 'product', redirectTo: 'product/all', pathMatch: 'full' },
+      { path: 'details/:productId', component: ProductDetailsComponent },
+      { path: 'cart', component: CartComponent },
+      //   { path: '**', redirectTo: 'product/all' },
     ],
   },
   {

@@ -15,7 +15,7 @@ export class ProductService {
     productCount: number;
   }>();
 
-  private productsPerPage: number = 2;
+  private productsPerPage: number = 10;
   private currentPage: number = 1;
 
   constructor(private http: HttpClient, private router: Router) {}
@@ -26,6 +26,7 @@ export class ProductService {
     const productData = new FormData();
     productData.append('title', product.title);
     productData.append('description', product.description);
+    productData.append('productType', product.productType);
     productData.append('price', product.price.toString());
     productData.append('image', product.image, product.title);
     console.log('Creating product:', product);
@@ -37,7 +38,7 @@ export class ProductService {
       .pipe(
         tap((response) => {
           console.log('Product created:', response);
-          this.getProducts(); // Обновляем продукты после создания
+          this.getProducts('all'); // Обновляем продукты после создания
         }),
         catchError((error) => {
           console.error('Error creating product:', error);
@@ -54,6 +55,7 @@ export class ProductService {
       productData.append('id', product.id);
       productData.append('title', product.title);
       productData.append('description', product.description);
+      productData.append('productType', product.productType);
       productData.append('price', product.price.toString());
       productData.append('image', product.image, product.title);
     } else {
@@ -69,7 +71,7 @@ export class ProductService {
       .pipe(
         tap((response) => {
           console.log('Product updated:', response);
-          this.getProducts(); // Обновляем продукты после обновления
+          this.getProducts('all'); // Обновляем продукты после обновления
         }),
         catchError((error) => {
           console.error('Error updating product:', error);
@@ -82,8 +84,11 @@ export class ProductService {
     return this.productUpdated.asObservable();
   }
 
-  getProducts(): void {
-    const queryParams = `?pagesize=${this.productsPerPage}&page=${this.currentPage}`;
+  getProducts(category: string): void {
+    let queryParams = `?pagesize=${this.productsPerPage}&page=${this.currentPage}`;
+    if (category && category !== 'all') {
+      queryParams += `&category=${category}`;
+    }
     console.log('Fetching products with params:', queryParams);
     this.http
       .get<{ message: string; products: Product[]; maxProducts: number }>(
@@ -97,6 +102,7 @@ export class ProductService {
               return {
                 title: product.title,
                 description: product.description,
+                productType: product.productType,
                 price: product.price,
                 id: product._id,
                 imagePath: product.imagePath,

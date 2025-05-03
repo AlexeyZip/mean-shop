@@ -1,16 +1,16 @@
 <div class="product-catalog">
-    <mat-list role="list">
-        <mat-list-item role="listitem">
-            <a [routerLink]="['product']">Smartphones</a>
-        </mat-list-item>
-        <mat-list-item role="listitem">
-            <a [routerLink]="['admin/createProduct']">Create Product!</a>
-        </mat-list-item>
-        <mat-list-item role="listitem">
-            <a [routerLink]="['product']">Laptops</a>
-        </mat-list-item>
-        <mat-list-item role="listitem">
-            <a [routerLink]="['product']">Home-appliances</a>
-        </mat-list-item>
-    </mat-list>
+  <mat-list role="list">
+    <mat-list-item role="listitem">
+      <a [routerLink]="['admin/createProduct']">Create Product!</a>
+    </mat-list-item>
+  </mat-list>
 </div>
+
+<button mat-button [matMenuTriggerFor]="menu">Categories</button>
+<mat-menu #menu="matMenu">
+  <button mat-menu-item [routerLink]="['/product', 'smartphones']">
+    Smartphones
+  </button>
+  <button mat-menu-item [routerLink]="['/product', 'tv']">TV</button>
+  <button mat-menu-item [routerLink]="['/product', 'all']">All products</button>
+</mat-menu>

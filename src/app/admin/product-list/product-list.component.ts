@@ -72,7 +72,7 @@ export class ProductListComponent implements OnInit {
       this.productsPerPage,
       this.currentPage
     );
-    this.productService.getProducts();
+    this.productService.getProducts('all');
   }
 
   delete(productId: string) {
@@ -83,7 +83,7 @@ export class ProductListComponent implements OnInit {
       .subscribe(
         () => {
           console.log('Product deleted:', productId);
-          this.productService.getProducts();
+          this.productService.getProducts('all');
         },
         () => {
           this.isLoading = false;
@@ -98,6 +98,6 @@ export class ProductListComponent implements OnInit {
       this.productsPerPage,
       this.currentPage
     );
-    this.productService.getProducts();
+    this.productService.getProducts('all');
   }
 }
