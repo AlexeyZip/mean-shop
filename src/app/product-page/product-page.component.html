@@ -1,8 +1,8 @@
-<h3>Products</h3>
+<h3>Product list</h3>
 <div class="products">
   <mat-card class="product-card" *ngFor="let product of products">
     <mat-card-header>
-      <mat-card-title>{{ product.title }}</mat-card-title>
+      <mat-card-title class="card-title">{{ product.title }}</mat-card-title>
     </mat-card-header>
     <img
       class="product-image"
@@ -10,12 +10,13 @@
       [src]="product.imagePath"
       [alt]="product.title"
     />
-    <mat-card-content>
+    <mat-card-content class="product-description">
       <p>
         {{ product.description }}
       </p>
+      <p>{{ product.price }}$</p>
     </mat-card-content>
-    <mat-card-actions>
+    <mat-card-actions class="product-actions-btns">
       <button mat-button [routerLink]="['/details', product.id]">
         More Details
       </button>

@@ -1,4 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  signal,
+  WritableSignal,
+  computed,
+} from '@angular/core';
 import { OrderService } from '../shared/order/order.service';
 import { Product } from '../shared/product/product.model';
 import { Order } from '../shared/order/order.model';
@@ -18,6 +24,19 @@ import { CartService } from '../shared/cart/cart.service';
 import { AuthService } from '../auth/auth.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AngularMaterialModule } from '../angular-material.module';
+import { MatTableModule } from '@angular/material/table';
+
+type CartItem = {
+  product: {
+    id: string | null;
+    title: string;
+    description: string;
+    imagePath?: File | any;
+    price: number;
+    creator: string | null;
+  };
+  quantity: number;
+};
 
 @Component({
   standalone: true,
@@ -34,21 +53,21 @@ import { AngularMaterialModule } from '../angular-material.module';
     ReactiveFormsModule,
     AngularMaterialModule,
     MatProgressSpinnerModule,
+    MatTableModule,
   ],
 })
 export class CartComponent implements OnInit {
   createOrderForm: FormGroup;
-  cart: {
-    product: {
-      id: string | null;
-      title: string;
-      description: string;
-      imagePath?: File | any;
-      price: number;
-      creator: string | null;
-    };
-    quantity: number;
-  }[] = [];
+  cart: WritableSignal<CartItem[]> = signal([]);
+  displayedColumns: string[] = [
+    'title',
+    'description',
+    'price',
+    'image',
+    'count',
+    'actions',
+  ];
+  cartLoaded = signal(false);
 
   constructor(
     private orderService: OrderService,
@@ -72,26 +91,31 @@ export class CartComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('cart');
-
     this.loadCart();
   }
 
   loadCart(): void {
-    this.cart = this.cartService.cart;
+    this.cart.set(this.cartService.getCartItems());
+    setTimeout(() => {
+      this.cartLoaded.set(true);
+    }, 0);
+
+    console.log(this.cart().length);
   }
 
   updateCart(): void {
-    this.cartService.cart = this.cart.slice();
+    (this.cartService.cart as any) = [...this.cart()];
   }
 
   removeFromCart(productId: string | null): void {
-    this.cart = this.cart.filter((item) => item.product.id !== productId);
-    this.cartService.cart = this.cart.slice();
+    this.cart.update((items) =>
+      items.filter((item) => item.product.id !== productId)
+    );
+    this.updateCart();
   }
 
   onPlaceOrder(): void {
-    const orderProducts = this.cart.map((item) => ({
+    const orderProducts = this.cart().map((item) => ({
       productId: item.product.id,
       quantity: item.quantity,
     }));
@@ -113,18 +137,18 @@ export class CartComponent implements OnInit {
       deliveryInfo,
     };
 
-    this.orderService.createOrder(newOrder).subscribe((createdOrder) => {
+    this.orderService.createOrder(newOrder).subscribe(() => {
       this.cartService.clearCart();
-      this.cart = this.cartService.getCartItems();
+      this.cart.set([]);
     });
   }
 
   calculateTotalPrice(): number {
-    return this.cart.reduce(
+    return this.cart().reduce(
       (sum, item) => sum + item.product.price * item.quantity,
       0
     );
   }
 
-  onSaveOrder() {}
+  onSaveOrder(): void {}
 }

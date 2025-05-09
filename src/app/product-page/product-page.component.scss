@@ -1,16 +1,58 @@
 .product-card {
-  //   max-width: 200px;
+  padding: 5px;
 }
 
 .products {
   display: grid;
   gap: 20px;
-  grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: repeat(6, 1fr);
+  grid-template-columns: repeat(4, 1fr); /* По умолчанию 4 колонки */
   justify-items: stretch;
   align-items: stretch;
 }
 
+/* Ширина 1200px и меньше — 3 колонки */
+@media (max-width: 1200px) {
+  .products {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Ширина 900px и меньше — 2 колонки */
+@media (max-width: 900px) {
+  .products {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Ширина 600px и меньше — 1 колонка */
+@media (max-width: 600px) {
+  .products {
+    grid-template-columns: 1fr;
+  }
+}
+
 .product-image {
   max-width: 300px;
+  max-height: 300px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  margin: 10px 0px;
+}
+
+.product-description {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.product-actions-btns {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-title {
+  white-space: nowrap;
+  font-size: 16px;
 }

@@ -1,3 +1,31 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  gap: 20px;
+
+  form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    .mat-form-field {
+      display: flex;
+      gap: 10px;
+    }
+    mat-form-field {
+      width: 100%;
+    }
+  }
+}
+
+.center-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
 mat-card-content {
   img {
     width: 200px;
@@ -8,4 +36,10 @@ mat-card-content {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 10px;
+}
+
+img {
+  max-width: 100px;
+  padding: 10px;
 }

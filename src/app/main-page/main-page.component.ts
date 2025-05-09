@@ -18,7 +18,7 @@ import { AuthService } from '../auth/auth.service';
 import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { CartService } from '../shared/cart/cart.service';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-main-page',
@@ -38,13 +38,13 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 export class MainPageComponent implements OnInit {
   userIsAuthenticated = signal(false);
   cartItemCount: number = 0;
+  readonly userIsAuthenticated$ = toObservable(this.userIsAuthenticated);
 
   constructor(
     public router: Router,
     private authService: AuthService,
     private cartService: CartService,
-    private destroyRef: DestroyRef,
-    private cdr: ChangeDetectorRef
+    private destroyRef: DestroyRef
   ) {
     effect(() => {
       console.log('Signal changed:', this.userIsAuthenticated());
@@ -63,8 +63,6 @@ export class MainPageComponent implements OnInit {
         // setTimeout(() => {
         this.userIsAuthenticated.set(isAuthenticated);
         // },)
-
-        this.cdr.detectChanges();
       });
     this.updateCartItemCount();
 
@@ -73,11 +71,6 @@ export class MainPageComponent implements OnInit {
     //   .subscribe((isAuthenticated: boolean) => {
     //     this.userIsAuthenticated = isAuthenticated;
     //   });
-    this.cartService.cartItemCount$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((count: any) => {
-        this.cartItemCount = count;
-      });
     this.cartService.cartItemCount$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((count: any) => {

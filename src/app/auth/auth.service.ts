@@ -24,7 +24,6 @@ export class AuthService {
   }
 
   getAuthStatusListener(): Observable<boolean> {
-    console.log('getAuthStatusListener called');
     return this.authStatusListener.asObservable();
   }
 

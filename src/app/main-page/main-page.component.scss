@@ -1,3 +1,7 @@
+:host {
+  height: 100%;
+}
+
 .main-page-header {
   display: flex;
   align-items: center;
@@ -54,4 +58,6 @@
 
 .main-content {
   padding: 20px;
+  display: flex;
+  height: calc(100% - 140px);
 }
